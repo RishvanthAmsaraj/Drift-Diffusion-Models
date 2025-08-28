@@ -56,33 +56,3 @@ A DDM is a type of sequential sampling model used in cognitive science, neurosci
 * **fast-dm**: C++ implementation with Python interface. Very fast for standard DDMs but less flexible.
 * **rtdists (R)**: R package for fitting response time distributions, including DDMs.
 * **Stan / PyMC**: General-purpose Bayesian frameworks where you can build custom DDMs from scratch.
-
----
-
-# Example: Basic Drift Diffusion Model with PyDDM
-
-import pyddm as ddm
-from pyddm import Model, Fittable, Sample
-from pyddm.models import DriftConstant, BoundConstant, ICPointSourceCenter, NoiseConstant, OverlayNonDecision
-
-## Define the model
-model = Model(
-    drift=DriftConstant(drift=0.5),
-    noise=NoiseConstant(noise=1.0),
-    bound=BoundConstant(B=1.0),
-    IC=ICPointSourceCenter(),
-    overlay=OverlayNonDecision(nondectime=0.3)
-)
-
-## Simulate data
-sim_data = model.simulate_n_trials(n=500)
-
-## Inspect simulated output
-print(sim_data[:10])  # first 10 simulated trials
-
-## Fit model to data (requires empirical dataset)
-# Example: fitting to simulated data
-sample = Sample.from_numpy_array(sim_data)
-fitted_model = model.fit(sample)
-
-print(fitted_model.parameters())
