@@ -1,85 +1,88 @@
 
-## 🔹 What is PyDDM?
+# PyDDM Overview
 
-**PyDDM** (Python Drift Diffusion Model) is a Python library used to **build, simulate, and fit drift-diffusion models (DDMs)**.
+## What is PyDDM
 
-* A **DDM** is a type of **sequential sampling model** used in cognitive science, neuroscience, and decision-making research to model how people (or agents) make two-choice decisions over time.
-* It assumes decisions are made by **accumulating noisy evidence** until a boundary (decision threshold) is reached.
+PyDDM (Python Drift Diffusion Model) is a Python library for building, simulating, and fitting drift-diffusion models (DDMs).
+A DDM is a type of sequential sampling model used in cognitive science, neuroscience, and decision-making research to model how agents make binary decisions over time. It assumes that noisy evidence accumulates until a decision threshold is reached.
 
 ---
 
-## 🔹 How PyDDM Works
+## How It Works
 
-1. **Model Setup**
+1. **Model Parameters**
 
-   * Define the parameters of the diffusion process:
-
-     * **Drift rate (v):** how quickly evidence accumulates toward one decision.
-     * **Boundary separation (a):** the amount of evidence needed before making a choice.
-     * **Starting point (z):** initial bias toward a choice.
-     * **Non-decision time (t0):** perceptual/motor delays not part of decision process.
+   * Drift rate (v): speed of evidence accumulation
+   * Boundary separation (a): amount of evidence required to make a decision
+   * Starting point (z): initial bias toward one choice
+   * Non-decision time (t0): perceptual or motor delays not part of the decision process
 
 2. **Simulation**
 
-   * PyDDM simulates decision-making trajectories (like noisy paths of evidence accumulation).
+   * PyDDM generates trajectories of evidence accumulation leading to choices and response times.
 
 3. **Fitting**
 
-   * It fits the model to **reaction time distributions and choice data** using maximum likelihood or Bayesian inference.
-   * You can fit experimental data (e.g., psychology experiments) to infer cognitive parameters.
+   * Models are fit to experimental data (choice and reaction time distributions) using likelihood-based methods.
 
 4. **Extensions**
 
-   * PyDDM allows custom models beyond the “vanilla” DDM, such as time-varying drift rates, collapsing boundaries, or more than two decision bounds.
+   * Supports custom models, such as time-varying drift rates, collapsing bounds, or multiple decision boundaries.
 
 ---
 
-## 🔹 Pros of PyDDM
+## Pros
 
-✅ **Flexible & Extensible** – You can customize drift rates, bounds, noise, etc.
-✅ **Python-native** – Easy integration with scientific stack (NumPy, SciPy, pandas).
-✅ **Visualization Tools** – Can plot trajectories, reaction time distributions, parameter recovery.
-✅ **Research-Grade** – Designed for psychology/neuroscience research.
-✅ **Supports complex models** – Not limited to classic DDM.
-
----
-
-## 🔹 Cons of PyDDM
-
-❌ **Learning Curve** – Requires some mathematical/statistical background in DDM theory.
-❌ **Performance** – Slower than highly optimized C/C++ implementations for large datasets.
-❌ **Limited Community** – Smaller user base compared to mainstream stats/ML libraries.
-❌ **Specialized** – Useful mainly in cognitive modeling, not general-purpose ML.
+* Flexible and extensible: custom components are easy to define
+* Python-native: integrates with NumPy, SciPy, and pandas
+* Visualization tools: trajectories, distributions, parameter recovery
+* Research-grade: designed for psychology and neuroscience experiments
+* Supports complex models beyond the standard DDM
 
 ---
 
-## 🔹 Alternatives to PyDDM
+## Cons
 
-1. **HDDM (Hierarchical Drift Diffusion Model in Python)**
-
-   * Bayesian approach (uses PyMC/Stan under the hood).
-   * Good for hierarchical modeling (group-level + individual-level).
-   * Strong in cognitive modeling.
-   * But: slower due to Bayesian sampling.
-
-2. **fast-dm (C++ with Python interface)**
-
-   * Very fast and efficient for fitting classic DDMs.
-   * Less flexible for custom models.
-
-3. **rtdists (R package)**
-
-   * For fitting response time distributions, including DDMs.
-   * Good if working in R.
-
-4. **Stan / PyMC** (general-purpose Bayesian frameworks)
-
-   * You can code a DDM from scratch if you want full flexibility.
+* Requires background in drift-diffusion theory to use effectively
+* Slower than optimized C/C++ implementations on large datasets
+* Smaller community and fewer tutorials than mainstream ML libraries
+* Specialized for cognitive modeling rather than general-purpose ML
 
 ---
 
-## 🔹 Rule of Thumb:
+## Alternatives
 
-* Use **PyDDM** if you want flexibility and Python integration.
-* Use **HDDM** if you want Bayesian hierarchical modeling.
-* Use **fast-dm** if you need raw speed on standard DDMs.
+* **HDDM**: Bayesian hierarchical DDM in Python, built on PyMC/Stan. Good for group-level modeling, but slower due to sampling.
+* **fast-dm**: C++ implementation with Python interface. Very fast for standard DDMs but less flexible.
+* **rtdists (R)**: R package for fitting response time distributions, including DDMs.
+* **Stan / PyMC**: General-purpose Bayesian frameworks where you can build custom DDMs from scratch.
+
+---
+
+# Example: Basic Drift Diffusion Model with PyDDM
+
+import pyddm as ddm
+from pyddm import Model, Fittable, Sample
+from pyddm.models import DriftConstant, BoundConstant, ICPointSourceCenter, NoiseConstant, OverlayNonDecision
+
+# 1. Define the model
+model = Model(
+    drift=DriftConstant(drift=0.5),
+    noise=NoiseConstant(noise=1.0),
+    bound=BoundConstant(B=1.0),
+    IC=ICPointSourceCenter(),
+    overlay=OverlayNonDecision(nondectime=0.3)
+)
+
+# 2. Simulate data
+sim_data = model.simulate_n_trials(n=500)
+
+# 3. Inspect simulated output
+print(sim_data[:10])  # first 10 simulated trials
+
+# 4. Fit model to data (requires empirical dataset)
+# Example: fitting to simulated data
+sample = Sample.from_numpy_array(sim_data)
+fitted_model = model.fit(sample)
+
+print(fitted_model.parameters())
