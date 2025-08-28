@@ -1,4 +1,6 @@
 
+You cannot run any of the code other than the synthetic ones, as you need to change the file path according to your device on the non-synthetic DDM files, which are typically located near the bottom of the code. 
+
 # PyDDM Overview
 
 ## What is PyDDM
