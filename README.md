@@ -65,7 +65,7 @@ import pyddm as ddm
 from pyddm import Model, Fittable, Sample
 from pyddm.models import DriftConstant, BoundConstant, ICPointSourceCenter, NoiseConstant, OverlayNonDecision
 
-# 1. Define the model
+## Define the model
 model = Model(
     drift=DriftConstant(drift=0.5),
     noise=NoiseConstant(noise=1.0),
@@ -74,13 +74,13 @@ model = Model(
     overlay=OverlayNonDecision(nondectime=0.3)
 )
 
-# 2. Simulate data
+## Simulate data
 sim_data = model.simulate_n_trials(n=500)
 
-# 3. Inspect simulated output
+## Inspect simulated output
 print(sim_data[:10])  # first 10 simulated trials
 
-# 4. Fit model to data (requires empirical dataset)
+## Fit model to data (requires empirical dataset)
 # Example: fitting to simulated data
 sample = Sample.from_numpy_array(sim_data)
 fitted_model = model.fit(sample)
